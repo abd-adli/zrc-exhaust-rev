@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<div class="admin-login-layout">
+  <div class="login-card">
+    <div class="login-header" style="display: flex; flex-direction: column; align-items: center; gap: 0.8rem; margin-bottom: 2rem;">
+      <img src="/images/logo.png" alt="ZRC Exhaust Logo" style="height: 50px; width: auto; object-fit: contain;">
+      <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">Log masuk ke panel administrator untuk mengelola antrean fabrikasi & katalog.</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="login-error">
+        ⚠️ <%= error %>
+      </div>
+    <% } %>
+
+    <form action="/admin/login" method="POST" style="display: flex; flex-direction: column; gap: 1.2rem; text-align: left;">
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input type="text" class="form-input" id="username" name="username" required placeholder="Masukkan username">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" class="form-input" id="password" name="password" required placeholder="Masukkan password">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="margin-top: 1rem; padding: 0.8rem; font-size: 1rem; width: 100%;">
+        Sign In 🔒
+      </button>
+    </form>
+    
+    <div style="margin-top: 2rem;">
+      <a href="/" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">← Kembali Ke Beranda</a>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

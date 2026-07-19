@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model CatalogItem {
+  id                String   @id @default(uuid())
+  brand             String
+  model             String
+  vehicleType       String
+  exhaustComponents String
+  price             Float
+  soundClipUrl      String
+  seoKeywords       String
+  description       String
+  images            String
+  isReadyStock      Boolean  @default(false)
+  stock             Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CustomOrder {
+  id                String   @id @default(uuid())
+  customerName      String
+  customerWhatsApp  String
+  vehicleBrand      String
+  vehicleModel      String
+  vehicleYear       String
+  vehicleEngine     String
+  material          String
+  pipingDiameter    String
+  mufflerType       String
+  soundRequest      String
+  orderStatus       String
+  paymentStatus     String
+  totalPrice        Float
+  downPaymentAmount Float
+  bookingDate       String
+  paymentToken      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model BookingSlot {
+  id          String @id @default(uuid())
+  date        String @unique
+  maxSlots    Int    @default(3)
+  bookedSlots Int    @default(0)
+}
+
+model SystemSetting {
+  key   String @id
+  value String
+}

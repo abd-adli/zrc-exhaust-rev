@@ -1,0 +1,275 @@
+<% let soundroomPage = true; %>
+<%- include('partials/header') %>
+
+<div class="soundroom-header">
+  <span class="section-subtitle">Exhaust Soundroom Check</span>
+  <h1 style="font-size: 2.8rem; margin-top: 0.5rem; color: var(--primary);">ZRC Exhaust Soundroom</h1>
+  <p style="color: var(--text-secondary); max-width: 650px; margin: 0.8rem auto 0 auto;">
+    Dengarkan langsung rekaman karakter suara hasil fabrikasi knalpot custom ZRC. Bandingkan material Titanium Grade-5 yang melengking tinggi dengan Stainless Steel SUS304 yang bulat ngebass.
+  </p>
+</div>
+
+<div class="soundroom-container">
+
+  <!-- Left Side: Active Console Player -->
+  <div class="master-player">
+    <div class="player-disk-wrapper">
+      <div class="player-disk" id="disk-spinner"></div>
+    </div>
+    
+    <h2 class="player-title" id="player-title">Pilih Track</h2>
+    <div class="player-subtitle" id="player-subtitle">Silakan pilih kendaraan di daftar track</div>
+
+    <!-- Interactive Simulated Waveform -->
+    <div class="waveform-container" id="waveform">
+      <!-- 20 wave bars for the visualizer -->
+      <div class="wave-bar" style="height: 15%"></div>
+      <div class="wave-bar" style="height: 25%"></div>
+      <div class="wave-bar" style="height: 35%"></div>
+      <div class="wave-bar" style="height: 40%"></div>
+      <div class="wave-bar" style="height: 60%"></div>
+      <div class="wave-bar" style="height: 80%"></div>
+      <div class="wave-bar" style="height: 70%"></div>
+      <div class="wave-bar" style="height: 50%"></div>
+      <div class="wave-bar" style="height: 90%"></div>
+      <div class="wave-bar" style="height: 65%"></div>
+      <div class="wave-bar" style="height: 85%"></div>
+      <div class="wave-bar" style="height: 75%"></div>
+      <div class="wave-bar" style="height: 55%"></div>
+      <div class="wave-bar" style="height: 40%"></div>
+      <div class="wave-bar" style="height: 60%"></div>
+      <div class="wave-bar" style="height: 80%"></div>
+      <div class="wave-bar" style="height: 45%"></div>
+      <div class="wave-bar" style="height: 30%"></div>
+      <div class="wave-bar" style="height: 20%"></div>
+      <div class="wave-bar" style="height: 15%"></div>
+    </div>
+
+    <!-- Hidden native Audio element -->
+    <audio id="audio-engine" src=""></audio>
+
+    <!-- Controls UI -->
+    <div class="player-controls">
+      <button class="control-btn" id="btn-prev" style="font-size: 1.5rem;">⏮️</button>
+      <button class="control-btn play-pause-btn" id="btn-play-pause">▶️</button>
+      <button class="control-btn" id="btn-next" style="font-size: 1.5rem;">⏭️</button>
+    </div>
+
+    <div class="time-slider-wrapper">
+      <span id="current-time">0:00</span>
+      <input type="range" class="time-slider" id="progress-bar" min="0" max="100" value="0">
+      <span id="duration">0:00</span>
+    </div>
+  </div>
+
+  <!-- Right Side: Tracks list selection -->
+  <div class="track-list">
+    <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--primary);">
+      🎶 Daftar Suara Knalpot Custom
+    </h3>
+    
+    <% catalogs.forEach(function(item, index) { %>
+      <div class="track-card" 
+           data-index="<%= index %>"
+           data-brand="<%= item.brand %>"
+           data-model="<%= item.model %>"
+           data-components="<%= item.exhaustComponents %>"
+           data-url="<%= item.soundClipUrl %>">
+        <div class="track-status-icon">▶️</div>
+        <div class="track-info">
+          <div class="track-title"><%= item.brand %> <%= item.model %></div>
+          <div class="track-meta">
+            <span>Komponen: <%= item.exhaustComponents %></span>
+            <span>•</span>
+            <span><%= item.vehicleType === 'CAR' ? 'Mobil 🚗' : 'Motor 🏍️' %></span>
+          </div>
+        </div>
+        <div class="track-duration">Sound Check</div>
+      </div>
+    <% }); %>
+  </div>
+
+</div>
+
+<!-- Client Audio Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const audioElement = document.getElementById('audio-engine');
+    const playPauseBtn = document.getElementById('btn-play-pause');
+    const prevBtn = document.getElementById('btn-prev');
+    const nextBtn = document.getElementById('btn-next');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeText = document.getElementById('current-time');
+    const durationText = document.getElementById('duration');
+    const diskSpinner = document.getElementById('disk-spinner');
+    const waveform = document.getElementById('waveform');
+    const playerTitle = document.getElementById('player-title');
+    const playerSubtitle = document.getElementById('player-subtitle');
+    const trackCards = document.querySelectorAll('.track-card');
+    
+    let currentTrackIndex = -1;
+    let isPlaying = false;
+
+    // Load active track details
+    function loadTrack(index) {
+      if (index < 0 || index >= trackCards.length) return;
+      
+      // Update UI active track state
+      trackCards.forEach(c => c.classList.remove('active'));
+      trackCards.forEach(c => c.querySelector('.track-status-icon').textContent = '▶️');
+      
+      const selectedCard = trackCards[index];
+      selectedCard.classList.add('active');
+      selectedCard.querySelector('.track-status-icon').textContent = '🔊';
+
+      // Load track data attributes
+      const url = selectedCard.dataset.url;
+      const brand = selectedCard.dataset.brand;
+      const model = selectedCard.dataset.model;
+      const components = selectedCard.dataset.components;
+
+      // Update Audio Engine Source
+      audioElement.src = url;
+      audioElement.load();
+
+      // Update Dashboard Header
+      playerTitle.textContent = `${brand} ${model}`;
+      playerSubtitle.textContent = `Specs: ${components}`;
+      currentTrackIndex = index;
+      
+      // Reset sliders
+      progressBar.value = 0;
+      currentTimeText.textContent = "0:00";
+    }
+
+    function playTrack() {
+      if (currentTrackIndex === -1 && trackCards.length > 0) {
+        loadTrack(0);
+      }
+      
+      isPlaying = true;
+      playPauseBtn.textContent = '⏸️';
+      diskSpinner.classList.add('spinning');
+      waveform.classList.add('playing');
+      
+      // Attempt to play audio (will catch autoplay block or missing files)
+      audioElement.play().catch(err => {
+        console.log("Mocking audio playback since actual file might be missing or browser blocked autoplay.");
+        // Simulate timer tick manually if audio load fails
+        startMockTimer();
+      });
+    }
+
+    function pauseTrack() {
+      isPlaying = false;
+      playPauseBtn.textContent = '▶️';
+      diskSpinner.classList.remove('spinning');
+      waveform.classList.remove('playing');
+      audioElement.pause();
+      stopMockTimer();
+    }
+
+    // Toggle Play / Pause
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        pauseTrack();
+      } else {
+        playTrack();
+      }
+    });
+
+    // Prev / Next Actions
+    prevBtn.addEventListener('click', () => {
+      let idx = currentTrackIndex - 1;
+      if (idx < 0) idx = trackCards.length - 1;
+      loadTrack(idx);
+      playTrack();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      let idx = currentTrackIndex + 1;
+      if (idx >= trackCards.length) idx = 0;
+      loadTrack(idx);
+      playTrack();
+    });
+
+    // Track card clicking listener
+    trackCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt(card.dataset.index);
+        loadTrack(idx);
+        playTrack();
+      });
+    });
+
+    // Format seconds into MM:SS
+    function formatTime(secs) {
+      if (isNaN(secs)) return '0:00';
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    // Audio metadata & time updates
+    audioElement.addEventListener('loadedmetadata', () => {
+      durationText.textContent = formatTime(audioElement.duration);
+    });
+
+    audioElement.addEventListener('timeupdate', () => {
+      if (!isMocking) {
+        const progress = (audioElement.currentTime / audioElement.duration) * 100;
+        progressBar.value = progress || 0;
+        currentTimeText.textContent = formatTime(audioElement.currentTime);
+      }
+    });
+
+    // Slider dragging
+    progressBar.addEventListener('input', () => {
+      if (audioElement.duration) {
+        const time = (progressBar.value / 100) * audioElement.duration;
+        audioElement.currentTime = time;
+      }
+    });
+
+    // Handle track completion
+    audioElement.addEventListener('ended', () => {
+      nextBtn.click();
+    });
+
+    // Mock playback behavior if audio URL is offline
+    let mockInterval = null;
+    let isMocking = false;
+    let mockCurrentTime = 0;
+    const mockDuration = 18; // 18 seconds mock clip duration
+
+    function startMockTimer() {
+      isMocking = true;
+      durationText.textContent = formatTime(mockDuration);
+      
+      mockInterval = setInterval(() => {
+        mockCurrentTime += 1;
+        if (mockCurrentTime > mockDuration) {
+          mockCurrentTime = 0;
+          clearInterval(mockInterval);
+          nextBtn.click();
+          return;
+        }
+        currentTimeText.textContent = formatTime(mockCurrentTime);
+        progressBar.value = (mockCurrentTime / mockDuration) * 100;
+      }, 1000);
+    }
+
+    function stopMockTimer() {
+      isMocking = false;
+      clearInterval(mockInterval);
+      mockCurrentTime = 0;
+    }
+
+    // Auto-select first track
+    if (trackCards.length > 0) {
+      loadTrack(0);
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>

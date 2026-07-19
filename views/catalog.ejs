@@ -1,0 +1,101 @@
+<%- include('partials/header') %>
+
+<!-- Ready Stock Hero / Header -->
+<section style="padding: 4rem 5% 2rem 5%; background-color: var(--bg-primary); text-align: center;">
+  <span class="section-subtitle">Spesialis Knalpot Custom</span>
+  <h1 style="font-size: 2.8rem; margin-bottom: 0.8rem; line-height: 1.2;">
+    Katalog <span class="text-gradient-red">Knalpot Ready Stock PNP</span> ZRC
+  </h1>
+  <p style="max-width: 700px; margin: 0 auto 2rem auto; color: var(--text-secondary); font-size: 1.05rem;">
+    Menyediakan knalpot siap pakai (Plug & Play) tanpa proses antrean custom. Dibuat dengan presisi tinggi oleh pengrajin las argon profesional kami, siap dikirim atau dipasang langsung ke kendaraan Anda.
+  </p>
+</section>
+
+<!-- Catalog Section -->
+<section class="catalog-section" style="padding-top: 2rem;">
+  <div class="catalog-controls">
+    <div class="filter-tabs">
+      <a href="/catalog" class="filter-tab <%= !typeFilter ? 'active' : '' %>">Semua Ready Stock</a>
+      <a href="/catalog?type=car" class="filter-tab <%= typeFilter === 'car' ? 'active' : '' %>">Mobil 🚗</a>
+      <a href="/catalog?type=motorcycle" class="filter-tab <%= typeFilter === 'motorcycle' ? 'active' : '' %>">Motor 🏍️</a>
+    </div>
+
+    <form class="search-bar" action="/catalog" method="GET">
+      <% if (typeFilter) { %>
+        <input type="hidden" name="type" value="<%= typeFilter %>">
+      <% } %>
+      <input type="text" class="search-input" name="search" placeholder="Cari brand atau tipe..." value="<%= search || '' %>">
+    </form>
+  </div>
+
+  <% if (catalogs.length === 0) { %>
+    <div class="bg-glass" style="border-radius: 8px; padding: 4rem; text-align: center; color: var(--text-secondary);">
+      <p style="font-size: 1.1rem; margin-bottom: 1rem;">Knalpot Ready Stock PNP belum tersedia untuk kategori ini.</p>
+      <a href="/catalog" class="btn btn-secondary" style="font-size: 0.85rem;">Tampilkan Semua</a>
+    </div>
+  <% } else { %>
+    <div class="catalog-grid">
+      <% catalogs.forEach(function(item) { %>
+        <div class="catalog-card">
+          <div class="card-img-wrapper">
+            <% 
+              let images = [];
+              try {
+                images = JSON.parse(item.images);
+              } catch(e) {
+                images = ['/images/exhaust_generic.jpg'];
+              }
+            %>
+            <img src="<%= images[0] %>" alt="Knalpot Ready Stock PNP <%= item.brand %> <%= item.model %>" onerror="this.src='https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=500'">
+            <span class="card-badge <%= item.vehicleType.toLowerCase() %>" style="top: 1rem; right: 1rem; position: absolute;">
+              <%= item.vehicleType === 'CAR' ? 'Mobil 🚗' : 'Motor 🏍️' %>
+            </span>
+          </div>
+          <div class="card-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <h3 class="card-brand-model" style="margin-bottom: 0;"><%= item.brand %> <%= item.model %></h3>
+            </div>
+            
+            <div style="margin-bottom: 0.8rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <% if (item.exhaustComponents) { %>
+                <span class="card-components" style="margin-bottom: 0;">
+                  🔧 <%= item.exhaustComponents.split(',').join(' + ') %>
+                </span>
+              <% } %>
+              
+              <% if (item.stock > 0) { %>
+                <span style="font-size: 0.75rem; background-color: #DEF7EC; color: #03543F; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700;">
+                  🟢 Ready Stock (Stok: <%= item.stock %>)
+                </span>
+              <% } else { %>
+                <span style="font-size: 0.75rem; background-color: #FDE8E8; color: #9B1C1C; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700;">
+                  🔴 Habis Terjual
+                </span>
+              <% } %>
+            </div>
+
+            <p class="card-description"><%= item.description %></p>
+            
+            <div class="card-footer" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+              <div class="card-price">
+                <%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(item.price) %>
+              </div>
+              
+              <% if (item.stock > 0) { %>
+                <% 
+                  let waMsg = `Halo ZRC Exhaust (Spesialis Knalpot Custom), saya ingin memesan Knalpot Ready Stock PNP untuk ${item.brand} ${item.model} (${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(item.price)}). Apakah masih tersedia?`;
+                  let waUrl = `https://wa.me/628123456789?text=${encodeURIComponent(waMsg)}`;
+                %>
+                <a href="<%= waUrl %>" target="_blank" class="btn btn-primary btn-card-cta">Beli Sekarang 💬</a>
+              <% } else { %>
+                <a href="https://wa.me/628123456789?text=Halo%20ZRC%20Exhaust,%20saya%20ingin%20tanya%20mengenai%20restock%20knalpot%20untuk%20<%= encodeURIComponent(item.brand) %>%20<%= encodeURIComponent(item.model) %>" target="_blank" class="btn btn-secondary btn-card-cta" style="cursor: pointer; opacity: 0.7;">Pre-Order WA 💬</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

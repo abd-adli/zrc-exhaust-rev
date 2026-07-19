@@ -1,0 +1,289 @@
+<% let adminPage = true; %>
+<%- include('partials/header') %>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <%- include('partials/admin_sidebar') %>
+
+  <!-- Main Content Area -->
+  <main class="admin-content">
+    <header class="admin-header">
+      <div>
+        <h1 style="font-size: 2rem; font-family: var(--font-display); color: var(--primary);">Katalog Presets</h1>
+        <p class="admin-title-desc">Kelola preset model kendaraan, spesifikasi komponen, harga dasar, dan kata kunci SEO.</p>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="document.getElementById('dialog-add-catalog').showModal()">+ Tambah Preset</button>
+      </div>
+    </header>
+
+    <!-- Preset Table Card -->
+    <div style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.8rem; box-shadow: var(--card-shadow);">
+      <h2 style="font-size: 1.3rem; margin-bottom: 1.2rem; color: var(--primary);">Daftar Katalog Presets</h2>
+      
+      <div class="table-wrapper">
+        <% if (catalogs.length === 0) { %>
+          <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            Katalog kosong. Silakan tambah preset baru untuk memulai.
+          </div>
+        <% } else { %>
+          <table>
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Brand / Model</th>
+                <th>Tipe / Ready Stock</th>
+                <th>Komponen</th>
+                <th>Harga Dasar</th>
+                <th>Keywords SEO</th>
+                <th style="width: 100px; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% catalogs.forEach(function(item) { %>
+                <% 
+                  let images = [];
+                  try {
+                    images = JSON.parse(item.images);
+                  } catch(e) {
+                    images = ['/images/exhaust_generic.jpg'];
+                  }
+                  
+                  // Component check helper
+                  let activeComps = item.exhaustComponents ? item.exhaustComponents.split(',') : [];
+                %>
+                <tr>
+                  <td>
+                    <img src="<%= images[0] %>" alt="preset image" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);" onerror="this.src='https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=150'">
+                  </td>
+                  <td>
+                    <strong style="color: var(--primary);"><%= item.brand %> <%= item.model %></strong>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= item.description %></div>
+                  </td>
+                  <td>
+                    <span class="badge <%= item.vehicleType === 'CAR' ? 'status-fabrication' : 'status-waiting' %>">
+                      <%= item.vehicleType === 'CAR' ? 'Mobil 🚗' : 'Motor 🏍️' %>
+                    </span>
+                    <div style="margin-top: 0.3rem;">
+                      <% if (item.isReadyStock) { %>
+                        <span class="badge" style="background-color: #10B981; color: white;">Ready Stock (Stok: <%= item.stock %>)</span>
+                      <% } else { %>
+                        <span class="badge" style="background-color: #3B82F6; color: white;">Custom Preset</span>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">
+                      <%= activeComps.join(', ') || '-' %>
+                    </div>
+                  </td>
+                  <td>
+                    <strong style="color: var(--primary);"><%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(item.price) %></strong>
+                  </td>
+                  <td>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<%= item.seoKeywords %>">
+                      <%= item.seoKeywords %>
+                    </div>
+                  </td>
+                  <td style="text-align: center;">
+                    <div class="crud-actions" style="justify-content: center;">
+                      <!-- Edit Dialog Button -->
+                      <button class="btn-icon edit" onclick="document.getElementById('dialog-edit-<%= item.id %>').showModal()" title="Edit Preset">✏️</button>
+                      
+                      <!-- Delete Form -->
+                      <form action="/admin/catalogs/delete/<%= item.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus preset ini?')">
+                        <button type="submit" class="btn-icon delete" title="Hapus Preset">❌</button>
+                      </form>
+                    </div>
+
+                    <!-- Dialog: Edit Catalog Item -->
+                    <dialog id="dialog-edit-<%= item.id %>" style="max-width: 600px; width: 90%; border-radius: 8px; border: 1px solid var(--border-color); padding: 2rem; margin: auto; box-shadow: var(--card-shadow-hover); background: #ffffff;">
+                      <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--primary); text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Edit Preset Katalog</h3>
+                      
+                      <form action="/admin/catalogs/update/<%= item.id %>" method="POST">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
+                          <div class="form-group">
+                            <label class="form-label">Brand *</label>
+                            <input type="text" class="form-input" name="brand" value="<%= item.brand %>" required>
+                          </div>
+                          
+                          <div class="form-group">
+                            <label class="form-label">Model *</label>
+                            <input type="text" class="form-input" name="model" value="<%= item.model %>" required>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label">Tipe Kendaraan</label>
+                            <select class="form-select" name="vehicleType">
+                              <option value="CAR" <%= item.vehicleType === 'CAR' ? 'selected' : '' %>>Mobil</option>
+                              <option value="MOTORCYCLE" <%= item.vehicleType === 'MOTORCYCLE' ? 'selected' : '' %>>Motor</option>
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label">Harga Dasar (Rp) *</label>
+                            <input type="number" class="form-input" name="price" value="<%= item.price %>" required>
+                          </div>
+
+                          <div class="form-group" style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+                            <input type="checkbox" id="edit-isReadyStock-<%= item.id %>" name="isReadyStock" value="true" <%= item.isReadyStock ? 'checked' : '' %> onchange="toggleEditStock('<%= item.id %>')">
+                            <label class="form-label" for="edit-isReadyStock-<%= item.id %>" style="margin-bottom: 0; cursor: pointer;">Ready Stock / PNP?</label>
+                          </div>
+
+                          <div class="form-group" id="edit-stock-group-<%= item.id %>" style="<%= item.isReadyStock ? '' : 'display: none;' %>">
+                            <label class="form-label">Jumlah Stok</label>
+                            <input type="number" class="form-input" name="stock" value="<%= item.stock %>" min="0">
+                          </div>
+
+                          <div class="form-group-full">
+                            <label class="form-label" style="display: block; margin-bottom: 0.3rem;">Komponen Knalpot *</label>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: var(--bg-secondary); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                              <% ['Header', 'Downpipe', 'Frontpipe', 'Centerpipe', 'Muffler', 'Fullsystem'].forEach(function(comp) { %>
+                                <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 500; color: var(--text-primary); cursor: pointer;">
+                                  <input type="checkbox" name="exhaustComponents" value="<%= comp %>" <%= activeComps.includes(comp) ? 'checked' : '' %>>
+                                  <%= comp %>
+                                </label>
+                              <% }); %>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label">Sound Clip URL</label>
+                            <input type="text" class="form-input" name="soundClipUrl" value="<%= item.soundClipUrl %>" placeholder="Contoh: /audio/civic.mp3">
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label">Kata Kunci SEO (pisahkan koma) *</label>
+                            <input type="text" class="form-input" name="seoKeywords" value="<%= item.seoKeywords %>" placeholder="Contoh: Custom Knalpot Mobil, Bengkel Knalpot Terdekat" required>
+                          </div>
+
+                          <div class="form-group-full">
+                            <label class="form-label">Foto URL (pisahkan dengan koma)</label>
+                            <input type="text" class="form-input" name="images" value="<%= images.join(', ') %>" placeholder="Contoh: /images/car1.jpg, /images/car2.jpg">
+                          </div>
+
+                          <div class="form-group-full">
+                            <label class="form-label">Deskripsi Preset</label>
+                            <textarea class="form-textarea" name="description" rows="3" required><%= item.description %></textarea>
+                          </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                          <button type="button" class="btn btn-secondary" onclick="document.getElementById('dialog-edit-<%= item.id %>').close()">Batal</button>
+                          <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        </div>
+                      </form>
+                    </dialog>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Dialog: Add Catalog Item -->
+<dialog id="dialog-add-catalog" style="max-width: 600px; width: 90%; border-radius: 8px; border: 1px solid var(--border-color); padding: 2rem; margin: auto; box-shadow: var(--card-shadow-hover); background: #ffffff;">
+  <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--primary); text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Tambah Preset Baru</h3>
+  
+  <form action="/admin/catalogs/create" method="POST">
+    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
+      <div class="form-group">
+        <label class="form-label">Brand *</label>
+        <input type="text" class="form-input" name="brand" placeholder="Contoh: Honda" required>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Model *</label>
+        <input type="text" class="form-input" name="model" placeholder="Contoh: Civic Type R" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipe Kendaraan</label>
+        <select class="form-select" name="vehicleType">
+          <option value="CAR" selected>Mobil</option>
+          <option value="MOTORCYCLE">Motor</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Harga Dasar (Rp) *</label>
+        <input type="number" class="form-input" name="price" placeholder="Contoh: 15000000" required>
+      </div>
+
+      <div class="form-group" style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+        <input type="checkbox" id="add-isReadyStock" name="isReadyStock" value="true" onchange="toggleAddStock()">
+        <label class="form-label" for="add-isReadyStock" style="margin-bottom: 0; cursor: pointer;">Ready Stock / PNP?</label>
+      </div>
+
+      <div class="form-group" id="add-stock-group" style="display: none;">
+        <label class="form-label">Jumlah Stok</label>
+        <input type="number" class="form-input" name="stock" value="5" min="0">
+      </div>
+
+      <div class="form-group-full">
+        <label class="form-label" style="display: block; margin-bottom: 0.3rem;">Komponen Knalpot *</label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: var(--bg-secondary); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-color);">
+          <% ['Header', 'Downpipe', 'Frontpipe', 'Centerpipe', 'Muffler', 'Fullsystem'].forEach(function(comp) { %>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 500; color: var(--text-primary); cursor: pointer;">
+              <input type="checkbox" name="exhaustComponents" value="<%= comp %>" <%= comp === 'Fullsystem' ? 'checked' : '' %>>
+              <%= comp %>
+            </label>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Sound Clip URL</label>
+        <input type="text" class="form-input" name="soundClipUrl" placeholder="Contoh: /audio/civic.mp3">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kata Kunci SEO (pisahkan koma) *</label>
+        <input type="text" class="form-input" name="seoKeywords" placeholder="Contoh: Custom Knalpot Mobil, Bengkel Knalpot Terdekat" required>
+      </div>
+
+      <div class="form-group-full">
+        <label class="form-label">Foto URL (pisahkan dengan koma)</label>
+        <input type="text" class="form-input" name="images" placeholder="Contoh: /images/car1.jpg, /images/car2.jpg">
+      </div>
+
+      <div class="form-group-full">
+        <label class="form-label">Deskripsi Preset</label>
+        <textarea class="form-textarea" name="description" rows="3" placeholder="Masukkan keterangan spesifikasi preset knalpot..." required></textarea>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('dialog-add-catalog').close()">Batal</button>
+      <button type="submit" class="btn btn-primary">Tambah Preset</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  function toggleEditStock(id) {
+    const cb = document.getElementById('edit-isReadyStock-' + id);
+    const grp = document.getElementById('edit-stock-group-' + id);
+    if (cb.checked) {
+      grp.style.display = '';
+    } else {
+      grp.style.display = 'none';
+    }
+  }
+
+  function toggleAddStock() {
+    const cb = document.getElementById('add-isReadyStock');
+    const grp = document.getElementById('add-stock-group');
+    if (cb.checked) {
+      grp.style.display = '';
+    } else {
+      grp.style.display = 'none';
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>

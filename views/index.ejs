@@ -1,0 +1,147 @@
+<%- include('partials/header') %>
+
+<!-- Hero Section (SEO-Optimized Copywriting) -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <span class="section-subtitle">ZRC Exhaust System</span>
+      <h1>Spesialis Custom Knalpot Mobil & Motor – <span class="text-gradient-red">Fullsystem Presisi & Bergaransi</span></h1>
+      <p>
+        Bikin sistem gas buang kendaraan Anda lebih optimal. Pengerjaan rapi dengan las TIG/Argon berkualitas tinggi untuk performa maksimal. Nikmati suara exhaust impian Anda tanpa mengorbankan durabilitas mesin.
+      </p>
+      <div class="hero-actions">
+        <a href="https://wa.me/6285280447010?text=Halo%20ZRC%20Exhaust,%20saya%20ingin%20tanya%20spesifikasi%20custom%20exhaust." target="_blank" class="btn btn-primary">Konsultasi Spek Custom Via WA 💬</a>
+        <a href="#slots" class="btn btn-secondary">Cek Slot Antrean 📅</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- High premium visual representation of exhaust -->
+      <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=600" alt="Spesialis Knalpot Custom Titanium Weld ZRC" onerror="this.src='https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=500'">
+    </div>
+  </div>
+</section>
+
+<!-- Stats Grid -->
+<section style="padding: 2rem 5%; margin-top: -3rem; margin-bottom: 2rem;">
+  <div class="stats-grid">
+    <div class="stats-card">
+      <h3 style="color: var(--primary);"><span class="text-gradient-blue">Grade-5 Titanium</span></h3>
+      <p style="margin-top: 0.3rem;">Reduksi bobot ekstrem hingga 60% dibanding knalpot bawaan pabrik dengan pembuangan panas lebih cepat.</p>
+    </div>
+    <div class="stats-card highlight">
+      <h3 style="color: var(--accent);"><span class="text-gradient-red">Active Valvetronic</span></h3>
+      <p style="margin-top: 0.3rem;">Ubah karakter suara secara instan via remote control. Silent mode untuk harian, Racing mode untuk sirkuit.</p>
+    </div>
+    <div class="stats-card">
+      <h3 style="color: var(--primary);"><span class="text-gradient-blue">Independent Checkout</span></h3>
+      <p style="margin-top: 0.3rem;">Transaksi langsung aman terintegrasi Payment Gateway Midtrans. Bayar DP online instan untuk kunci slot antrean.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Booking Slot Urgency Banner -->
+<section style="padding: 2rem 5%;" id="slots">
+  <div class="slots-banner">
+    <h2 style="font-size: 1.6rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      📅 Kuota Antrean Fabrikasi Minggu Ini
+    </h2>
+    <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.5rem; max-width: 750px;">
+      Setiap knalpot ZRC dikerjakan secara hand-made presisi tinggi. Kami membatasi kapasitas order harian demi menjaga kualitas las argon TIG. Silakan cek slot tanggal tersedia sebelum memesan:
+    </p>
+    
+    <div class="slots-grid">
+      <% upcomingSlots.forEach(function(slot) { %>
+        <% 
+          let dateObj = new Date(slot.date);
+          let formattedDay = dateObj.toLocaleDateString('id-ID', { weekday: 'short' });
+          let formattedDate = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+          let avail = slot.maxSlots - slot.bookedSlots;
+          let statusText = 'Tersedia';
+          let statusStyle = 'color: #16A34A;';
+          if (avail === 0) {
+            statusText = 'Penuh';
+            statusStyle = 'color: #DC2626;';
+          } else if (avail === 1) {
+            statusText = 'Sisa 1 Slot';
+            statusStyle = 'color: #EA580C;';
+          }
+        %>
+        <div class="slot-day-card">
+          <div class="day-name"><%= formattedDay %></div>
+          <div class="day-date"><%= formattedDate %></div>
+          <div class="day-status" style="<%= statusStyle %>"><%= statusText %></div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<!-- Catalog Section -->
+<section class="catalog-section" id="presets">
+  <div class="section-title-wrapper">
+    <span class="section-subtitle">Paling Populer</span>
+    <h2 class="section-title">Katalog Knalpot Custom Preset</h2>
+  </div>
+
+  <div class="catalog-controls">
+    <div class="filter-tabs">
+      <a href="/#presets" class="filter-tab <%= !typeFilter ? 'active' : '' %>" onclick="window.location.href='/?#presets'">Semua Presets</a>
+      <a href="/?type=car#presets" class="filter-tab <%= typeFilter === 'car' ? 'active' : '' %>" onclick="window.location.href='/?type=car#presets'">Mobil 🚗</a>
+      <a href="/?type=motorcycle#presets" class="filter-tab <%= typeFilter === 'motorcycle' ? 'active' : '' %>" onclick="window.location.href='/?type=motorcycle#presets'">Motor 🏍️</a>
+    </div>
+
+    <form class="search-bar" action="/#presets" method="GET">
+      <% if (typeFilter) { %>
+        <input type="hidden" name="type" value="<%= typeFilter %>">
+      <% } %>
+      <input type="text" class="search-input" name="search" placeholder="Cari brand / model kendaraan..." value="<%= search || '' %>">
+    </form>
+  </div>
+
+  <% if (catalogs.length === 0) { %>
+    <div class="bg-glass" style="border-radius: 8px; padding: 4rem; text-align: center; color: var(--text-secondary);">
+      <p style="font-size: 1.1rem; margin-bottom: 1rem;">Katalog knalpot custom belum ditemukan.</p>
+      <a href="/?#presets" class="btn btn-secondary" style="font-size: 0.85rem;">Tampilkan Semua</a>
+    </div>
+  <% } else { %>
+    <div class="catalog-grid">
+      <% catalogs.forEach(function(item) { %>
+        <div class="catalog-card">
+          <div class="card-img-wrapper">
+            <% 
+              let images = [];
+              try {
+                images = JSON.parse(item.images);
+              } catch(e) {
+                images = ['/images/exhaust_generic.jpg'];
+              }
+            %>
+            <img src="<%= images[0] %>" alt="<%= item.brand %> <%= item.model %> - Spesialis Knalpot Custom" onerror="this.src='https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=500'">
+            <span class="card-badge <%= item.vehicleType.toLowerCase() %>">
+              <%= item.vehicleType === 'CAR' ? 'Mobil 🚗' : 'Motor 🏍️' %>
+            </span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-brand-model"><%= item.brand %> <%= item.model %></h3>
+            
+            <% if (item.exhaustComponents) { %>
+              <div class="card-components">
+                🔧 <%= item.exhaustComponents.split(',').join(' + ') %>
+              </div>
+            <% } %>
+
+            <p class="card-description"><%= item.description %></p>
+            <div class="card-footer">
+              <div class="card-price">
+                <%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(item.price) %>
+              </div>
+              <a href="/order?brand=<%= encodeURIComponent(item.brand) %>&model=<%= encodeURIComponent(item.model) %>&price=<%= item.price %>&components=<%= encodeURIComponent(item.exhaustComponents) %>" class="btn btn-primary btn-card-cta">Configure ⚡</a>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

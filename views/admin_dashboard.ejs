@@ -1,0 +1,143 @@
+<% let adminPage = true; %>
+<%- include('partials/header') %>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <%- include('partials/admin_sidebar') %>
+
+  <!-- Main Content Area -->
+  <main class="admin-content">
+    <header class="admin-header">
+      <div>
+        <h1 style="font-size: 2rem; font-family: var(--font-display); color: var(--primary);">Dashboard Overview</h1>
+        <p class="admin-title-desc">Ringkasan statistik dan antrean pengerjaan aktif bengkel ZRC Exhaust.</p>
+      </div>
+      <div>
+        <!-- Setting DP Rate in header -->
+        <form class="admin-card-form" action="/admin/settings/dp" method="POST" style="padding: 0.8rem 1.2rem; border-radius: 8px; display: flex; align-items: center; gap: 0.8rem; margin: 0; box-shadow: var(--card-shadow);">
+          <label class="form-label" for="dpPercentage" style="margin: 0; font-size: 0.85rem; font-weight: 700;">DP Rate (%):</label>
+          <input type="number" class="form-input" id="dpPercentage" name="dpPercentage" value="<%= currentDP %>" min="10" max="100" style="padding: 0.4rem; width: 70px;" required>
+          <button type="submit" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Update</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="admin-stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Custom Orders</div>
+        <div class="stat-value"><%= ordersCount %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Katalog Preset</div>
+        <div class="stat-value"><%= catalogsCount %></div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Antrean Fabrikasi</div>
+        <div class="stat-value"><%= activeFabrications %></div>
+      </div>
+      <div class="stat-card" style="border-left-color: #16A34A;">
+        <div class="stat-label">Selesai Fitting</div>
+        <div class="stat-value"><%= completedOrders %></div>
+      </div>
+    </div>
+
+    <!-- Split Section: Active Orders vs WhatsApp logs -->
+    <div class="dashboard-split">
+      
+      <!-- Left Panel: Recent Orders Queue -->
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Antrean Pesanan Terbaru</h2>
+          <a href="/admin/orders" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Semua Pesanan 📦</a>
+        </div>
+        
+        <div class="table-wrapper">
+          <% if (recentOrders.length === 0) { %>
+            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+              Belum ada pesanan terdaftar.
+            </div>
+          <% } else { %>
+            <table>
+              <thead>
+                <tr>
+                  <th>Pelanggan</th>
+                  <th>Kendaraan</th>
+                  <th>Tanggal Booking</th>
+                  <th>Status Order</th>
+                  <th>Pembayaran</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recentOrders.forEach(function(order) { %>
+                  <tr>
+                    <td>
+                      <strong><%= order.customerName %></strong>
+                      <div style="font-size: 0.75rem; color: var(--text-muted);"><%= order.customerWhatsApp %></div>
+                    </td>
+                    <td><%= order.vehicleBrand %> <%= order.vehicleModel %></td>
+                    <td><%= order.bookingDate %></td>
+                    <td>
+                      <% if (order.orderStatus === 'PENDING_CONSULTATION') { %>
+                        <span class="badge status-pending">Konsultasi</span>
+                      <% } else if (order.orderStatus === 'WAITING_FOR_DP') { %>
+                        <span class="badge status-waiting">Tunggu DP</span>
+                      <% } else if (order.orderStatus === 'FABRICATION') { %>
+                        <span class="badge status-fabrication">Fabrikasi</span>
+                      <% } else if (order.orderStatus === 'FITTING') { %>
+                        <span class="badge status-fitting">Fitting</span>
+                      <% } else { %>
+                        <span class="badge status-completed">Selesai</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (order.paymentStatus === 'UNPAID') { %>
+                        <span class="badge payment-unpaid">Belum Lunas</span>
+                      <% } else if (order.paymentStatus === 'DP_PAID') { %>
+                        <span class="badge payment-dppaid">DP Lunas</span>
+                      <% } else { %>
+                        <span class="badge payment-fullypaid">Lunas</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Right Panel: Live Simulated WhatsApp Feed Logs -->
+      <div class="dashboard-panel" style="border-left: 2px solid var(--accent);">
+        <div class="panel-header">
+          <h2 class="panel-title">📱 WhatsApp API Simulator</h2>
+          <span class="badge status-waiting" style="font-size: 0.65rem;">Webhook Active</span>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.2rem; margin-top: -0.5rem;">
+          Log notifikasi real-time simulasi WhatsApp API yang dikirim ke nomor pelanggan & pemilik bengkel.
+        </p>
+
+        <div class="whatsapp-log-feed">
+          <% if (notificationLogs.length === 0) { %>
+            <div style="text-align: center; padding: 4rem; color: var(--text-muted); font-size: 0.85rem;">
+              Menunggu pemicu... Kirim pesanan atau selesaikan pembayaran DP untuk melihat log notifikasi.
+            </div>
+          <% } else { %>
+            <% notificationLogs.forEach(function(log) { %>
+              <div class="whatsapp-log-card">
+                <div class="whatsapp-log-header">
+                  <span class="whatsapp-log-to">To: <%= log.recipientName %> (<%= log.phone %>)</span>
+                  <span><%= log.timestamp %></span>
+                </div>
+                <div class="whatsapp-log-body"><%= log.message %></div>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

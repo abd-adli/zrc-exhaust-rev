@@ -1,0 +1,106 @@
+<% let adminPage = true; %>
+<%- include('partials/header') %>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <%- include('partials/admin_sidebar') %>
+
+  <!-- Main Content Area -->
+  <main class="admin-content">
+    <header class="admin-header">
+      <div>
+        <h1 style="font-size: 2rem; font-family: var(--font-display); color: var(--primary);">Manajemen Pesanan Custom</h1>
+        <p class="admin-title-desc">Kelola siklus produksi knalpot custom, pantau pembayaran DP, dan perbarui antrean pengerjaan.</p>
+      </div>
+    </header>
+
+    <!-- Orders Table Card -->
+    <div style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.8rem; box-shadow: var(--card-shadow);">
+      <h2 style="font-size: 1.3rem; margin-bottom: 1.2rem; color: var(--primary);">Daftar Semua Pesanan</h2>
+
+      <div class="table-wrapper">
+        <% if (orders.length === 0) { %>
+          <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            Belum ada pesanan custom yang masuk.
+          </div>
+        <% } else { %>
+          <table>
+            <thead>
+              <tr>
+                <th>Customer / Kontak</th>
+                <th>Kendaraan</th>
+                <th>Spesifikasi Custom</th>
+                <th>Keuangan (Total / DP)</th>
+                <th>Booking Date</th>
+                <th>Status Order</th>
+                <th>Status Bayar</th>
+                <th style="width: 50px; text-align: center;">Hapus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(function(order) { %>
+                <tr>
+                  <td>
+                    <strong><%= order.customerName %></strong>
+                    <div style="margin-top: 0.2rem;">
+                      <a href="https://wa.me/<%= order.customerWhatsApp.replace(/[^0-9]/g, '') %>" target="_blank" class="text-gradient-red" style="font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.2rem;">
+                        💬 Chat WA (<%= order.customerWhatsApp %>)
+                      </a>
+                    </div>
+                  </td>
+                  <td>
+                    <strong><%= order.vehicleBrand %> <%= order.vehicleModel %></strong>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);"><%= order.vehicleEngine %> (<%= order.vehicleYear %>)</div>
+                  </td>
+                  <td style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary);">
+                    • Mat: <span style="font-weight:700; color:var(--primary);"><%= order.material %></span><br>
+                    • Pipa: <span style="font-weight:700; color:var(--primary);"><%= order.pipingDiameter %></span><br>
+                    • Muffler: <span style="font-weight:700; color:var(--primary);"><%= order.mufflerType %></span><br>
+                    • Suara: <span style="font-style:italic;"><%= order.soundRequest %></span>
+                  </td>
+                  <td>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Total: <strong style="color:var(--primary);"><%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(order.totalPrice) %></strong></div>
+                    <div style="font-size: 0.8rem; color: var(--accent);">DP: <strong><%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(order.downPaymentAmount) %></strong></div>
+                  </td>
+                  <td>
+                    <strong style="color: var(--primary-light);"><%= order.bookingDate %></strong>
+                  </td>
+                  <td>
+                    <!-- Onchange Auto Update form -->
+                    <form action="/admin/orders/update/<%= order.id %>" method="POST" id="form-status-<%= order.id %>">
+                      <input type="hidden" name="paymentStatus" value="<%= order.paymentStatus %>">
+                      <select name="orderStatus" class="action-select" onchange="this.form.submit()">
+                        <option value="PENDING_CONSULTATION" <%= order.orderStatus === 'PENDING_CONSULTATION' ? 'selected' : '' %>>Pending Konsultasi</option>
+                        <option value="WAITING_FOR_DP" <%= order.orderStatus === 'WAITING_FOR_DP' ? 'selected' : '' %>>Tunggu DP</option>
+                        <option value="FABRICATION" <%= order.orderStatus === 'FABRICATION' ? 'selected' : '' %>>Fabrication</option>
+                        <option value="FITTING" <%= order.orderStatus === 'FITTING' ? 'selected' : '' %>>Fitting</option>
+                        <option value="COMPLETED" <%= order.orderStatus === 'COMPLETED' ? 'selected' : '' %>>Completed</option>
+                      </select>
+                    </form>
+                  </td>
+                  <td>
+                    <form action="/admin/orders/update/<%= order.id %>" method="POST" id="form-payment-<%= order.id %>">
+                      <input type="hidden" name="orderStatus" value="<%= order.orderStatus %>">
+                      <select name="paymentStatus" class="action-select" onchange="this.form.submit()">
+                        <option value="UNPAID" <%= order.paymentStatus === 'UNPAID' ? 'selected' : '' %>>Belum Bayar</option>
+                        <option value="DP_PAID" <%= order.paymentStatus === 'DP_PAID' ? 'selected' : '' %>>DP Lunas</option>
+                        <option value="FULLY_PAID" <%= order.paymentStatus === 'FULLY_PAID' ? 'selected' : '' %>>Lunas</option>
+                      </select>
+                    </form>
+                  </td>
+                  <td style="text-align: center;">
+                    <form action="/admin/orders/delete/<%= order.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus order ini?')">
+                      <button type="submit" class="btn-icon delete" title="Hapus Order">❌</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,48 @@
+<aside class="admin-sidebar">
+  <div class="admin-logo">
+    <img src="/images/logo.png" alt="ZRC Exhaust Logo" style="height: 35px; width: auto; object-fit: contain;">
+    <span class="badge-admin">Admin</span>
+  </div>
+  
+  <nav class="admin-nav">
+    <a href="/admin/dashboard" class="admin-nav-item" id="nav-admin-dashboard">
+      📊 Overview
+    </a>
+    <a href="/admin/catalogs" class="admin-nav-item" id="nav-admin-catalogs">
+      🛠️ Catalog Presets
+    </a>
+    <a href="/admin/orders" class="admin-nav-item" id="nav-admin-orders">
+      📦 Custom Orders
+    </a>
+    <a href="/admin/slots" class="admin-nav-item" id="nav-admin-slots">
+      📅 Booking Slots
+    </a>
+    <a href="/" class="admin-nav-item" style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem;">
+      🌐 Customer View
+    </a>
+  </nav>
+
+  <div class="admin-user">
+    <div class="admin-user-info">
+      <span class="admin-username">ZRC Administrator</span>
+      <span class="admin-role">Super Admin</span>
+    </div>
+    <a href="/admin/logout" class="admin-logout-btn">
+      Sign Out 🔌
+    </a>
+  </div>
+</aside>
+
+<script>
+  // Highlighter for Admin Sidebar
+  const adminPath = window.location.pathname;
+  if (adminPath === '/admin/dashboard') {
+    document.getElementById('nav-admin-dashboard').classList.add('active');
+  } else if (adminPath === '/admin/catalogs') {
+    document.getElementById('nav-admin-catalogs').classList.add('active');
+  } else if (adminPath === '/admin/orders') {
+    document.getElementById('nav-admin-orders').classList.add('active');
+  } else if (adminPath === '/admin/slots') {
+    document.getElementById('nav-admin-slots').classList.add('active');
+  }
+</script>

@@ -1,0 +1,165 @@
+<%- include('partials/header') %>
+
+<div class="form-container" style="max-width: 650px;">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
+    <h1 style="font-size: 1.8rem; color: var(--primary);">Jadwal Booking Terdaftar!</h1>
+    <p style="color: var(--text-secondary); font-size: 0.9rem;">Selesaikan pembayaran Down Payment (DP) Anda untuk mengunci slot antrean fabrikasi.</p>
+  </div>
+
+  <!-- Invoice summary card -->
+  <div class="pricing-summary" style="background: var(--bg-secondary); border-style: solid; border-width: 1px; margin-bottom: 2rem;">
+    <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.6rem; margin-bottom: 0.8rem; font-family: var(--font-display); color: var(--primary);">
+      🧾 Detail Invoice #<%= order.id.slice(0,8).toUpperCase() %>
+    </h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Nama Customer:</span>
+        <strong style="color: var(--primary);"><%= order.customerName %></strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Nomor WhatsApp:</span>
+        <strong style="color: var(--primary);"><%= order.customerWhatsApp %></strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Kendaraan:</span>
+        <strong style="color: var(--primary);"><%= order.vehicleBrand %> <%= order.vehicleModel %> (<%= order.vehicleYear %>)</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Spesifikasi Custom:</span>
+        <strong style="color: var(--primary);"><%= order.material %> | <%= order.pipingDiameter %> | <%= order.mufflerType %></strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Karakter Suara:</span>
+        <strong style="color: var(--primary);"><%= order.soundRequest %></strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Jadwal Booking:</span>
+        <strong style="color: var(--accent);"><%= order.bookingDate %></strong>
+      </div>
+      
+      <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.5rem 0;">
+
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Status Pembayaran:</span>
+        <span class="badge <%= order.paymentStatus === 'DP_PAID' ? 'status-completed' : (order.paymentStatus === 'FULLY_PAID' ? 'status-fitting' : 'payment-unpaid') %>">
+          <%= order.paymentStatus === 'DP_PAID' ? 'DP LUNAS' : (order.paymentStatus === 'FULLY_PAID' ? 'LUNAS SEPENUHNYA' : 'BELUM DIBAYAR') %>
+        </span>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-secondary);">Status Pengerjaan:</span>
+        <span class="badge <%= order.orderStatus === 'FABRICATION' ? 'status-fabrication' : (order.orderStatus === 'COMPLETED' ? 'status-completed' : 'status-pending') %>">
+          <%= order.orderStatus %>
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-top: 0.5rem;">
+        <span style="color: var(--text-secondary);">Estimasi Total Price:</span>
+        <strong style="color: var(--primary);"><%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(order.totalPrice) %></strong>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 700; color: var(--accent); border-top: 1px dashed var(--border-color); padding-top: 0.5rem;">
+        <span>Down Payment (DP):</span>
+        <span><%= new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(order.downPaymentAmount) %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Midtrans Snap action triggers -->
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    <% if (order.paymentStatus === 'UNPAID') { %>
+      <button class="btn btn-primary" id="pay-button" style="padding: 1rem 2rem; font-size: 1.05rem;">
+        Bayar Down Payment Aman (Midtrans) 💳
+      </button>
+
+      <!-- Developer Local Simulation Option -->
+      <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; text-align: center; margin-top: 1rem;">
+        <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">🛠️ Developer Demo Mode</span>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1rem;">Gunakan simulasi ini untuk mengetes checkout & notifikasi WhatsApp lokal tanpa API server key asli.</p>
+        <button class="btn btn-secondary" id="simulate-payment-btn" style="font-size: 0.85rem; padding: 0.6rem 1.2rem; width: 100%;">
+          Simulasikan Pembayaran DP Berhasil ⚡
+        </button>
+      </div>
+    <% } else { %>
+      <div style="background-color: #DCFCE7; border: 1px solid #BBF7D0; color: #15803D; padding: 1.5rem; border-radius: 8px; text-align: center;">
+        <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.4rem;">Pembayaran DP Berhasil Diterima!</strong>
+        <p style="font-size: 0.88rem;">Antrean jadwal fabrikasi Anda pada tanggal <strong><%= order.bookingDate %></strong> telah teruji aman di sistem kami. Tim ZRC Exhaust akan mengirimkan update pengerjaan secara berkala via WhatsApp ke nomor Anda.</p>
+      </div>
+      <a href="/" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; margin-top: 1rem;">Kembali Ke Beranda</a>
+    <% } %>
+  </div>
+
+</div>
+
+<!-- Load Midtrans Snap JS SDK -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<%= clientKey %>"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const payButton = document.getElementById('pay-button');
+    const simulateButton = document.getElementById('simulate-payment-btn');
+    const orderId = "<%= order.id %>";
+    const paymentToken = "<%= order.paymentToken %>";
+
+    if (payButton && paymentToken) {
+      payButton.addEventListener('click', () => {
+        // Trigger Snap Checkout
+        if (paymentToken.startsWith('mock-')) {
+          alert('Pesanan ini terdaftar dalam mode Demo lokal. Silakan klik tombol "Simulasikan Pembayaran DP Berhasil" di bawah untuk memproses pembayaran mockup.');
+          return;
+        }
+
+        window.snap.pay(paymentToken, {
+          onSuccess: function(result) {
+            console.log('Success:', result);
+            window.location.reload();
+          },
+          onPending: function(result) {
+            console.log('Pending:', result);
+            alert('Pembayaran Anda sedang diproses. Silakan cek berkala status invoice Anda.');
+          },
+          onError: function(result) {
+            console.log('Error:', result);
+            alert('Terjadi kesalahan pembayaran. Silakan coba kembali.');
+          },
+          onClose: function() {
+            console.log('Checkout closed by customer.');
+          }
+        });
+      });
+    }
+
+    if (simulateButton) {
+      simulateButton.addEventListener('click', async () => {
+        simulateButton.disabled = true;
+        simulateButton.textContent = 'Memproses Simulasi...';
+
+        try {
+          const response = await fetch('/api/payment/simulate-success', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId })
+          });
+
+          const result = await response.json();
+          if (result.status === 'OK') {
+            alert('Simulasi Sukses! Status Pembayaran Diperbarui: DP_PAID. WhatsApp Notifikasi Terkirim.');
+            window.location.reload();
+          } else {
+            alert('Simulasi gagal: ' + JSON.stringify(result));
+            simulateButton.disabled = false;
+            simulateButton.textContent = 'Simulasikan Pembayaran DP Berhasil ⚡';
+          }
+        } catch (error) {
+          console.error(error);
+          alert('Koneksi server gagal.');
+          simulateButton.disabled = false;
+          simulateButton.textContent = 'Simulasikan Pembayaran DP Berhasil ⚡';
+        }
+      });
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>

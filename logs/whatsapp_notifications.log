@@ -1,0 +1,108 @@
+[19/7/2026, 13.39.14] To: Adli Developer (08129876543)
+Message: Halo *Adli Developer*,
+
+Pesanan custom exhaust Anda (*Kawasaki Ninja ZX-25R*) telah terdaftar di *ZRC Exhaust*!
+
+Jadwal Booking: *2026-07-20*
+Estimasi Total: *Rp 13.300.000*
+Down Payment (DP 30%): *Rp 3.990.000*
+
+Silakan selesaikan pembayaran DP Anda untuk mengunci jadwal fabrikasi.
+Link Invoice: http://localhost:3000/order/success/0294e488-1b1c-4ba7-a56c-80e7188c7863
+
+Terima kasih!
+----------------------------------------
+[19/7/2026, 13.39.14] To: Owner ZRC Exhaust (08123456789)
+Message: [ZRC NOTIF] Pesanan Baru!
+
+Nama: Adli Developer
+WA: 08129876543
+Kendaraan: Kawasaki Ninja ZX-25R (2023)
+Bahan: TITANIUM
+Booking Date: 2026-07-20
+Total: Rp 13.300.000
+DP: Rp 3.990.000
+
+Detail: http://localhost:3000/admin/orders
+----------------------------------------
+[19/7/2026, 13.39.22] To: Adli Developer (08129876543)
+Message: Halo *Adli Developer*,
+
+Pembayaran DP sebesar *Rp 3.990.000* untuk pesanan custom exhaust *Kawasaki Ninja ZX-25R* telah kami terima.
+
+Status pesanan Anda telah diperbarui menjadi: *FABRICATION (Dalam Pengerjaan)*.
+
+Jadwal pengerjaan Anda: *2026-07-20*.
+Kami akan menghubungi Anda jika ada fitting tambahan. Terimakasih!
+----------------------------------------
+[19/7/2026, 13.39.22] To: Owner ZRC Exhaust (08123456789)
+Message: [ZRC NOTIF] Pembayaran DP Lunas!
+
+Nama: Adli Developer
+Kendaraan: Kawasaki Ninja ZX-25R
+Jumlah: Rp 3.990.000
+Booking Date: 2026-07-20
+Status Order: FABRICATION.
+
+Silakan cek Dashboard Admin.
+----------------------------------------
+[19/7/2026, 13.53.22] To: Adli Developer (08129876543)
+Message: Halo *Adli Developer*,
+
+Pesanan custom exhaust Anda (*Kawasaki Ninja ZX-25R*) telah terdaftar di *ZRC Exhaust*!
+
+Jadwal Booking: *2026-07-20*
+Estimasi Total: *Rp 13.300.000*
+Down Payment (DP 30%): *Rp 3.990.000*
+
+Silakan selesaikan pembayaran DP Anda untuk mengunci jadwal fabrikasi.
+Link Invoice: http://localhost:3000/order/success/c1386485-2232-4f44-9a70-3be127441eb2
+
+Terima kasih!
+----------------------------------------
+[19/7/2026, 13.53.22] To: Owner ZRC Exhaust (08123456789)
+Message: [ZRC NOTIF] Pesanan Baru!
+
+Nama: Adli Developer
+WA: 08129876543
+Kendaraan: Kawasaki Ninja ZX-25R (2023)
+Bahan: TITANIUM
+Booking Date: 2026-07-20
+Total: Rp 13.300.000
+DP: Rp 3.990.000
+
+Detail: http://localhost:3000/admin/orders
+----------------------------------------
+[19/7/2026, 13.53.31] To: Adli Developer (08129876543)
+Message: Halo *Adli Developer*,
+
+Pembayaran DP sebesar *Rp 3.990.000* untuk pesanan custom exhaust *Kawasaki Ninja ZX-25R* telah kami terima.
+
+Status pesanan Anda telah diperbarui menjadi: *FABRICATION (Dalam Pengerjaan)*.
+
+Jadwal pengerjaan Anda: *2026-07-20*.
+Kami akan menghubungi Anda jika ada fitting tambahan. Terimakasih!
+----------------------------------------
+[19/7/2026, 13.53.31] To: Owner ZRC Exhaust (08123456789)
+Message: [ZRC NOTIF] Pembayaran DP Lunas!
+
+Nama: Adli Developer
+Kendaraan: Kawasaki Ninja ZX-25R
+Jumlah: Rp 3.990.000
+Booking Date: 2026-07-20
+Status Order: FABRICATION.
+
+Silakan cek Dashboard Admin.
+----------------------------------------
+[19/7/2026, 13.54.40] To: Adli Developer (08129876543)
+Message: Halo *Adli Developer*,
+
+Status pesanan ZRC Exhaust Anda telah diperbarui!
+
+Status Baru: *Jadwal Fitting Kendaraan*
+Status Pembayaran: *DP_PAID*
+Detail Kendaraan: *Kawasaki Ninja ZX-25R*
+Estimasi Total: *Rp 13.300.000*
+
+Jika ada pertanyaan, silakan hubungi admin kami. Terima kasih!
+----------------------------------------

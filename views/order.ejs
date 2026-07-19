@@ -1,0 +1,224 @@
+<%- include('partials/header') %>
+
+<div class="form-container">
+  <h1 class="form-title">Konfigurator Knalpot Custom</h1>
+  <p class="form-subtitle">Tentukan spesifikasi kendaraan Anda dan booking slot antrean pengerjaan Anda secara realtime.</p>
+  
+  <form action="/order" method="POST" id="orderForm">
+    <!-- Section 1: Customer Details -->
+    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 1rem; font-family: var(--font-display); color: var(--primary);">👤 1. Informasi Kontak</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="customerName">Nama Lengkap</label>
+          <input type="text" class="form-input" id="customerName" name="customerName" required placeholder="Contoh: Budi Santoso">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="customerWhatsApp">Nomor WhatsApp</label>
+          <input type="tel" class="form-input" id="customerWhatsApp" name="customerWhatsApp" required placeholder="Contoh: 0812XXXXXXXX">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Vehicle Specs -->
+    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 1rem; font-family: var(--font-display); color: var(--primary);">🚗 2. Spesifikasi Kendaraan</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="vehicleBrand">Brand Kendaraan</label>
+          <input type="text" class="form-input" id="vehicleBrand" name="vehicleBrand" required placeholder="Honda / Toyota / Kawasaki / Yamaha" value="<%= presetBrand %>">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="vehicleModel">Model / Tipe Kendaraan</label>
+          <input type="text" class="form-input" id="vehicleModel" name="vehicleModel" required placeholder="Civic FL5 / GR Yaris / ZX-25R / R6" value="<%= presetModel %>">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="vehicleYear">Tahun Perakitan</label>
+          <input type="number" class="form-input" id="vehicleYear" name="vehicleYear" required placeholder="Contoh: 2023" min="1950" max="2027">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="vehicleEngine">Kapasitas & Tipe Mesin</label>
+          <input type="text" class="form-input" id="vehicleEngine" name="vehicleEngine" required placeholder="Contoh: 2000cc Turbo / 250cc 4-Silinder">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Custom Spec Configurator -->
+    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 1rem; font-family: var(--font-display); color: var(--primary);">⚙️ 3. Spesifikasi Custom Exhaust</h3>
+      <div class="form-grid">
+        
+        <!-- Material Choice (Stainless vs Titanium) -->
+        <div class="form-group">
+          <label class="form-label" for="material">Pilihan Material</label>
+          <select class="form-select" id="material" name="material" required>
+            <option value="STAINLESS_STEEL" selected>Stainless Steel 304 (Standar)</option>
+            <option value="TITANIUM">Grade-5 Titanium (Premium, Ringan, Burnt Blue) (+Rp3.500.000)</option>
+          </select>
+        </div>
+
+        <!-- Piping Diameter -->
+        <div class="form-group">
+          <label class="form-label" for="pipingDiameter">Ukuran Diameter Pipa (Inci)</label>
+          <select class="form-select" id="pipingDiameter" name="pipingDiameter" required>
+            <option value="2.0 Inch">2.0 Inci (Mesin < 1.5L / Motor)</option>
+            <option value="2.5 Inch" selected>2.5 Inci (Mesin 1.5L - 2.0L Turbo)</option>
+            <option value="3.0 Inch">3.0 Inci (Mesin > 2.0L Turbo / High Performance)</option>
+          </select>
+        </div>
+
+        <!-- Muffler / Valve Setup -->
+        <div class="form-group">
+          <label class="form-label" for="mufflerType">Tipe Muffler</label>
+          <select class="form-select" id="mufflerType" name="mufflerType" required>
+            <option value="Standard Custom" selected>Standard Free Flow (Karakter Suara Padat)</option>
+            <option value="Valvetronic System">Valvetronic System (Katup Valve Remote Control) (+Rp2.000.000)</option>
+            <option value="Dual Exhaust System">Dual Exit / Quad-Tips Output (+Rp1.500.000)</option>
+          </select>
+        </div>
+
+        <!-- Custom Sound request -->
+        <div class="form-group">
+          <label class="form-label" for="soundRequest">Karakter Suara yang Diinginkan</label>
+          <select class="form-select" id="soundRequest" name="soundRequest" required>
+            <option value="Deep Bass" selected>Bass Bulat Adem (Suara Sopan di Rpm Rendah)</option>
+            <option value="High Pitched Screamer">High Pitched Screamer (Melengking Ala F1)</option>
+            <option value="Dry Racing Sound">Garing Kering / Raw Racing Sound</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section 4: Booking slots Date Picker -->
+    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 0.5rem; font-family: var(--font-display); color: var(--primary);">📅 4. Pilih Jadwal Fabrikasi</h3>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Slot harian dibatasi untuk menjamin kerapihan las argon knalpot. Silakan pilih tanggal fabrikasi:</p>
+      
+      <div class="booking-slots-picker">
+        <% availableSlots.forEach(function(slot) { %>
+          <% 
+            let dateObj = new Date(slot.date);
+            let formattedDay = dateObj.toLocaleDateString('id-ID', { weekday: 'short' });
+            let formattedDate = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            let isFull = slot.bookedSlots >= slot.maxSlots;
+            let labelText = `${slot.maxSlots - slot.bookedSlots} Slot`;
+            if (isFull) {
+              labelText = 'Penuh';
+            }
+          %>
+          <div class="slot-option">
+            <input type="radio" 
+                   name="bookingDate" 
+                   value="<%= slot.date %>" 
+                   id="slot-<%= slot.date %>" 
+                   required
+                   <%= isFull ? 'disabled' : '' %>
+            >
+            <label class="slot-label" for="slot-<%= slot.date %>">
+              <%= formattedDay %>
+              <span><%= formattedDate %></span>
+              <span style="font-size: 0.65rem; color: <%= isFull ? '#DC2626' : '#1E3A8A' %>;"><%= labelText %></span>
+            </label>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- Hidden input for total estimated price -->
+    <input type="hidden" name="totalEstimatedPrice" id="hiddenTotalPrice" value="<%= presetPrice || '5000000' %>">
+
+    <!-- Section 5: Realtime pricing summary -->
+    <div class="pricing-summary">
+      <div class="pricing-row">
+        <span>Base Custom (Preset / Est. Standar):</span>
+        <span id="txt-base-price">Rp0</span>
+      </div>
+      <div class="pricing-row">
+        <span>Material Titanium Surcharge:</span>
+        <span id="txt-material-surcharge">Rp0</span>
+      </div>
+      <div class="pricing-row">
+        <span>Muffler Setup Upgrade:</span>
+        <span id="txt-muffler-surcharge">Rp0</span>
+      </div>
+      <div class="pricing-row total">
+        <span>Estimasi Total:</span>
+        <span id="txt-total-price">Rp0</span>
+      </div>
+      <div class="pricing-row dp">
+        <span>Uang Muka / Down Payment (DP <%= dpPercent %>%):</span>
+        <span id="txt-dp-price">Rp0</span>
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem; width: 100%;">
+        Kunci Jadwal Fabrikasi & Bayar DP Sekarang ⚡
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<!-- Configurator Logic Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const presetPrice = parseFloat("<%= presetPrice %>") || 5000000;
+    const dpPercent = parseFloat("<%= dpPercent %>") || 30;
+
+    const selectMaterial = document.getElementById('material');
+    const selectMuffler = document.getElementById('mufflerType');
+    const txtBasePrice = document.getElementById('txt-base-price');
+    const txtMaterialSurcharge = document.getElementById('txt-material-surcharge');
+    const txtMufflerSurcharge = document.getElementById('txt-muffler-surcharge');
+    const txtTotalPrice = document.getElementById('txt-total-price');
+    const txtDpPrice = document.getElementById('txt-dp-price');
+    const hiddenTotalPrice = document.getElementById('hiddenTotalPrice');
+
+    function formatIDR(val) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+    }
+
+    function calculatePrice() {
+      // 1. Base Price
+      let base = presetPrice;
+      
+      // 2. Material Surcharge
+      let materialSurcharge = 0;
+      if (selectMaterial.value === 'TITANIUM') {
+        materialSurcharge = 3500000; // 3.5 Million IDR surcharge for Grade 5 Titanium
+      }
+
+      // 3. Muffler Setup Surcharge
+      let mufflerSurcharge = 0;
+      if (selectMuffler.value === 'Valvetronic System') {
+        mufflerSurcharge = 2000000; // 2 Million IDR surcharge for active valvetronic
+      } else if (selectMuffler.value === 'Dual Exhaust System') {
+        mufflerSurcharge = 1500000; // 1.5 Million IDR surcharge
+      }
+
+      const total = base + materialSurcharge + mufflerSurcharge;
+      const dp = (total * dpPercent) / 100;
+
+      // Update UI Text
+      txtBasePrice.textContent = formatIDR(base);
+      txtMaterialSurcharge.textContent = formatIDR(materialSurcharge);
+      txtMufflerSurcharge.textContent = formatIDR(mufflerSurcharge);
+      txtTotalPrice.textContent = formatIDR(total);
+      txtDpPrice.textContent = formatIDR(dp);
+
+      // Save to hidden input
+      hiddenTotalPrice.value = total;
+    }
+
+    // Bind event listeners
+    selectMaterial.addEventListener('change', calculatePrice);
+    selectMuffler.addEventListener('change', calculatePrice);
+
+    // Initial calculation
+    calculatePrice();
+  });
+</script>
+
+<%- include('partials/footer') %>

@@ -7,21 +7,36 @@ const crypto = require('crypto');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
-require('dotenv').config();
 
-// --- TARO SCRIPT DI SINI (BARIS 9) ---
-if (process.env.VERCEL) {
-  const dbPath = path.join('/tmp', 'dev.db');
-  const localDbPath = path.join(__dirname, 'prisma', 'dev.db');
 
-  if (fs.existsSync(localDbPath) && !fs.existsSync(dbPath)) {
-    fs.copyFileSync(localDbPath, dbPath);
-    console.log('Database successfully copied to /tmp');
+const { execSync } = require('child_process');
+
+// Script auto-copy database & force generate Prisma Client di Vercel
+if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+  try {
+    // 1. Force generate Prisma Client buat Linux Vercel
+    console.log('Generating Prisma Client...');
+    execSync('npx prisma generate', { stdio: 'inherit' });
+
+    // 2. Copy database SQLite ke /tmp
+    const dbPath = '/tmp/dev.db';
+    const possiblePaths = [
+      path.join(__dirname, 'prisma', 'dev.db'),
+      path.join(__dirname, 'dev.db')
+    ];
+    
+    const localDbPath = possiblePaths.find(p => fs.existsSync(p));
+
+    if (localDbPath && !fs.existsSync(dbPath)) {
+      fs.copyFileSync(localDbPath, dbPath);
+      console.log('Database successfully copied from', localDbPath, 'to', dbPath);
+    }
+  } catch (err) {
+    console.error('Failed to prepare runtime environment:', err);
   }
 }
-// -------------------------------------
 
-
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3000;

@@ -21,8 +21,6 @@ if (process.env.VERCEL) {
 }
 // -------------------------------------
 
-const prisma = new PrismaClient();
-const app = express();
 
 const prisma = new PrismaClient();
 const app = express();

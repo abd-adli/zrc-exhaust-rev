@@ -7,6 +7,23 @@ const crypto = require('crypto');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
+require('dotenv').config();
+
+// --- TARO SCRIPT DI SINI (BARIS 9) ---
+if (process.env.VERCEL) {
+  const dbPath = path.join('/tmp', 'dev.db');
+  const localDbPath = path.join(__dirname, 'prisma', 'dev.db');
+
+  if (fs.existsSync(localDbPath) && !fs.existsSync(dbPath)) {
+    fs.copyFileSync(localDbPath, dbPath);
+    console.log('Database successfully copied to /tmp');
+  }
+}
+// -------------------------------------
+
+const prisma = new PrismaClient();
+const app = express();
+
 const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3000;

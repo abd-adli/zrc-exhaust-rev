@@ -5,16 +5,16 @@
   </div>
   
   <nav class="admin-nav">
-    <a href="/admin/dashboard" class="admin-nav-item" id="nav-admin-dashboard">
+    <a href="/minzan/dashboard" class="admin-nav-item" id="nav-admin-dashboard">
       📊 Overview
     </a>
-    <a href="/admin/catalogs" class="admin-nav-item" id="nav-admin-catalogs">
+    <a href="/minzan/catalogs" class="admin-nav-item" id="nav-admin-catalogs">
       🛠️ Catalog Presets
     </a>
-    <a href="/admin/orders" class="admin-nav-item" id="nav-admin-orders">
+    <a href="/minzan/orders" class="admin-nav-item" id="nav-admin-orders">
       📦 Custom Orders
     </a>
-    <a href="/admin/slots" class="admin-nav-item" id="nav-admin-slots">
+    <a href="/minzan/slots" class="admin-nav-item" id="nav-admin-slots">
       📅 Booking Slots
     </a>
     <a href="/" class="admin-nav-item" style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem;">
@@ -27,7 +27,7 @@
       <span class="admin-username">ZRC Administrator</span>
       <span class="admin-role">Super Admin</span>
     </div>
-    <a href="/admin/logout" class="admin-logout-btn">
+    <a href="/minzan/logout" class="admin-logout-btn">
       Sign Out 🔌
     </a>
   </div>
@@ -36,13 +36,13 @@
 <script>
   // Highlighter for Admin Sidebar
   const adminPath = window.location.pathname;
-  if (adminPath === '/admin/dashboard') {
+  if (adminPath === '/minzan/dashboard') {
     document.getElementById('nav-admin-dashboard').classList.add('active');
-  } else if (adminPath === '/admin/catalogs') {
+  } else if (adminPath === '/minzan/catalogs') {
     document.getElementById('nav-admin-catalogs').classList.add('active');
-  } else if (adminPath === '/admin/orders') {
+  } else if (adminPath === '/minzan/orders') {
     document.getElementById('nav-admin-orders').classList.add('active');
-  } else if (adminPath === '/admin/slots') {
+  } else if (adminPath === '/minzan/slots') {
     document.getElementById('nav-admin-slots').classList.add('active');
   }
 </script>

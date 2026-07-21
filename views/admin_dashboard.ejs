@@ -14,7 +14,7 @@
       </div>
       <div>
         <!-- Setting DP Rate in header -->
-        <form class="admin-card-form" action="/admin/settings/dp" method="POST" style="padding: 0.8rem 1.2rem; border-radius: 8px; display: flex; align-items: center; gap: 0.8rem; margin: 0; box-shadow: var(--card-shadow);">
+        <form class="admin-card-form" action="/minzan/settings/dp" method="POST" style="padding: 0.8rem 1.2rem; border-radius: 8px; display: flex; align-items: center; gap: 0.8rem; margin: 0; box-shadow: var(--card-shadow);">
           <label class="form-label" for="dpPercentage" style="margin: 0; font-size: 0.85rem; font-weight: 700;">DP Rate (%):</label>
           <input type="number" class="form-input" id="dpPercentage" name="dpPercentage" value="<%= currentDP %>" min="10" max="100" style="padding: 0.4rem; width: 70px;" required>
           <button type="submit" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Update</button>
@@ -49,7 +49,7 @@
       <div class="dashboard-panel">
         <div class="panel-header">
           <h2 class="panel-title">Antrean Pesanan Terbaru</h2>
-          <a href="/admin/orders" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Semua Pesanan 📦</a>
+          <a href="/minzan/orders" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Semua Pesanan 📦</a>
         </div>
         
         <div class="table-wrapper">

@@ -143,7 +143,7 @@ function requireAdmin(req, res, next) {
   if (req.session && req.session.isAdmin) {
     return next();
   }
-  res.redirect('/admin/login');
+  res.redirect('/minzan/login');
 }
 
 // Inject Config parameters helper to all templates
@@ -456,7 +456,7 @@ app.post('/order', async (req, res) => {
     const formattedDP = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(dpAmount);
     
     const customerMsg = `Halo *${customerName}*,\n\nPesanan custom exhaust Anda (*${vehicleBrand} ${vehicleModel}*) telah terdaftar di *ZRC Exhaust*!\n\nJadwal Booking: *${bookingDate}*\nEstimasi Total: *${formattedPrice}*\nDown Payment (DP ${dpPercent}%): *${formattedDP}*\n\nSilakan selesaikan pembayaran DP Anda untuk mengunci jadwal fabrikasi.\nLink Invoice: http://localhost:${PORT}/order/success/${order.id}\n\nTerima kasih!`;
-    const ownerMsg = `[ZRC NOTIF] Pesanan Baru!\n\nNama: ${customerName}\nWA: ${customerWhatsApp}\nKendaraan: ${vehicleBrand} ${vehicleModel} (${vehicleYear})\nBahan: ${material}\nBooking Date: ${bookingDate}\nTotal: ${formattedPrice}\nDP: ${formattedDP}\n\nDetail: http://localhost:${PORT}/admin/orders`;
+    const ownerMsg = `[ZRC NOTIF] Pesanan Baru!\n\nNama: ${customerName}\nWA: ${customerWhatsApp}\nKendaraan: ${vehicleBrand} ${vehicleModel} (${vehicleYear})\nBahan: ${material}\nBooking Date: ${bookingDate}\nTotal: ${formattedPrice}\nDP: ${formattedDP}\n\nDetail: http://localhost:${PORT}/minzan/orders`;
 
     logWhatsAppMessage(customerWhatsApp, customerName, customerMsg);
     logWhatsAppMessage('08123456789', 'Owner ZRC Exhaust', ownerMsg); // Hardcoded Owner WA number
@@ -620,26 +620,26 @@ app.post('/api/payment/simulate-success', async (req, res) => {
    ========================================================================== */
 
 // 7. Login Page
-app.get('/admin/login', (req, res) => {
+app.get('/minzan/login', (req, res) => {
   if (req.session && req.session.isAdmin) {
-    return res.redirect('/admin/dashboard');
+    return res.redirect('/minzan/dashboard');
   }
   res.render('admin_login', { 
     error: null,
     metaTitle: "Admin Login - ZRC Exhaust",
     metaDescription: "Log masuk ke panel admin ZRC Exhaust untuk mengelola katalog, booking slot, dan detail order custom.",
-    metaKeywords: "Admin ZRC"
+    metaKeywords: "Admin RZC"
   });
 });
 
-app.post('/admin/login', async (req, res) => {
+app.post('/minzan/login', async (req, res) => {
   const { username, password } = req.body;
   const bcrypt = require('bcryptjs');
   
   if (username === process.env.ADMIN_USERNAME && bcrypt.compareSync(password, process.env.ADMIN_PASSWORD_HASH)) {
     req.session.isAdmin = true;
     req.session.username = username;
-    return res.redirect('/admin/dashboard');
+    return res.redirect('/minzan/dashboard');
   }
 
   res.render('admin_login', { 
@@ -651,13 +651,13 @@ app.post('/admin/login', async (req, res) => {
 });
 
 // Logout
-app.get('/admin/logout', (req, res) => {
+app.get('/minzan/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/');
 });
 
 // 8. Main Dashboard Home
-app.get('/admin/dashboard', requireAdmin, async (req, res) => {
+app.get('/minzan/dashboard', requireAdmin, async (req, res) => {
   try {
     const ordersCount = await prisma.customOrder.count();
     const catalogsCount = await prisma.catalogItem.count();
@@ -698,7 +698,7 @@ app.get('/admin/dashboard', requireAdmin, async (req, res) => {
 });
 
 // Route: Update DP settings
-app.post('/admin/settings/dp', requireAdmin, async (req, res) => {
+app.post('/minzan/settings/dp', requireAdmin, async (req, res) => {
   try {
     const { dpPercentage } = req.body;
     await prisma.systemSetting.upsert({
@@ -706,7 +706,7 @@ app.post('/admin/settings/dp', requireAdmin, async (req, res) => {
       update: { value: dpPercentage.toString() },
       create: { key: 'DP_PERCENTAGE', value: dpPercentage.toString() }
     });
-    res.redirect('/admin/dashboard');
+    res.redirect('/minzan/dashboard');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error updating settings');
@@ -714,7 +714,7 @@ app.post('/admin/settings/dp', requireAdmin, async (req, res) => {
 });
 
 // 9. Catalog CRUD Listings
-app.get('/admin/catalogs', requireAdmin, async (req, res) => {
+app.get('/minzan/catalogs', requireAdmin, async (req, res) => {
   try {
     const catalogs = await prisma.catalogItem.findMany({
       orderBy: { createdAt: 'desc' }
@@ -733,7 +733,7 @@ app.get('/admin/catalogs', requireAdmin, async (req, res) => {
 });
 
 // Create Catalog
-app.post('/admin/catalogs/create', requireAdmin, async (req, res) => {
+app.post('/minzan/catalogs/create', requireAdmin, async (req, res) => {
   try {
     const { brand, model, vehicleType, exhaustComponents, price, description, images, soundClipUrl, seoKeywords } = req.body;
     const isReadyStock = req.body.isReadyStock === 'on' || req.body.isReadyStock === 'true';
@@ -768,7 +768,7 @@ app.post('/admin/catalogs/create', requireAdmin, async (req, res) => {
         stock
       }
     });
-    res.redirect('/admin/catalogs');
+    res.redirect('/minzan/catalogs');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error creating catalog item');
@@ -776,7 +776,7 @@ app.post('/admin/catalogs/create', requireAdmin, async (req, res) => {
 });
 
 // Update Catalog
-app.post('/admin/catalogs/update/:id', requireAdmin, async (req, res) => {
+app.post('/minzan/catalogs/update/:id', requireAdmin, async (req, res) => {
   try {
     const { brand, model, vehicleType, exhaustComponents, price, description, images, soundClipUrl, seoKeywords } = req.body;
     const isReadyStock = req.body.isReadyStock === 'on' || req.body.isReadyStock === 'true';
@@ -810,7 +810,7 @@ app.post('/admin/catalogs/update/:id', requireAdmin, async (req, res) => {
         stock
       }
     });
-    res.redirect('/admin/catalogs');
+    res.redirect('/minzan/catalogs');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error updating catalog item');
@@ -818,12 +818,12 @@ app.post('/admin/catalogs/update/:id', requireAdmin, async (req, res) => {
 });
 
 // Delete Catalog
-app.post('/admin/catalogs/delete/:id', requireAdmin, async (req, res) => {
+app.post('/minzan/catalogs/delete/:id', requireAdmin, async (req, res) => {
   try {
     await prisma.catalogItem.delete({
       where: { id: req.params.id }
     });
-    res.redirect('/admin/catalogs');
+    res.redirect('/minzan/catalogs');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error deleting catalog item');
@@ -831,7 +831,7 @@ app.post('/admin/catalogs/delete/:id', requireAdmin, async (req, res) => {
 });
 
 // 10. Orders Management CRUD (Read, Update Status, Update Payment, Delete)
-app.get('/admin/orders', requireAdmin, async (req, res) => {
+app.get('/minzan/orders', requireAdmin, async (req, res) => {
   try {
     const orders = await prisma.customOrder.findMany({
       orderBy: { createdAt: 'desc' }
@@ -850,7 +850,7 @@ app.get('/admin/orders', requireAdmin, async (req, res) => {
 });
 
 // Update Order Status / Payment
-app.post('/admin/orders/update/:id', requireAdmin, async (req, res) => {
+app.post('/minzan/orders/update/:id', requireAdmin, async (req, res) => {
   try {
     const { orderStatus, paymentStatus } = req.body;
     const oldOrder = await prisma.customOrder.findUnique({ where: { id: req.params.id } });
@@ -877,7 +877,7 @@ app.post('/admin/orders/update/:id', requireAdmin, async (req, res) => {
       logWhatsAppMessage(updatedOrder.customerWhatsApp, updatedOrder.customerName, customerMsg);
     }
 
-    res.redirect('/admin/orders');
+    res.redirect('/minzan/orders');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error updating order');
@@ -885,7 +885,7 @@ app.post('/admin/orders/update/:id', requireAdmin, async (req, res) => {
 });
 
 // Delete Order
-app.post('/admin/orders/delete/:id', requireAdmin, async (req, res) => {
+app.post('/minzan/orders/delete/:id', requireAdmin, async (req, res) => {
   try {
     const order = await prisma.customOrder.findUnique({ where: { id: req.params.id } });
     if (order) {
@@ -902,7 +902,7 @@ app.post('/admin/orders/delete/:id', requireAdmin, async (req, res) => {
         where: { id: req.params.id }
       });
     }
-    res.redirect('/admin/orders');
+    res.redirect('/minzan/orders');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error deleting order');
@@ -910,7 +910,7 @@ app.post('/admin/orders/delete/:id', requireAdmin, async (req, res) => {
 });
 
 // 11. Booking Slots CRUD Override
-app.get('/admin/slots', requireAdmin, async (req, res) => {
+app.get('/minzan/slots', requireAdmin, async (req, res) => {
   try {
     const todayStr = new Date().toISOString().split('T')[0];
     const slots = await prisma.bookingSlot.findMany({
@@ -932,7 +932,7 @@ app.get('/admin/slots', requireAdmin, async (req, res) => {
 });
 
 // Add or Update Slot Limit
-app.post('/admin/slots/save', requireAdmin, async (req, res) => {
+app.post('/minzan/slots/save', requireAdmin, async (req, res) => {
   try {
     const { date, maxSlots } = req.body;
     const maxVal = parseInt(maxSlots) || 3;
@@ -943,7 +943,7 @@ app.post('/admin/slots/save', requireAdmin, async (req, res) => {
       create: { date, maxSlots: maxVal, bookedSlots: 0 }
     });
 
-    res.redirect('/admin/slots');
+    res.redirect('/minzan/slots');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error updating slot limit');
@@ -951,12 +951,12 @@ app.post('/admin/slots/save', requireAdmin, async (req, res) => {
 });
 
 // Delete Slot Limit override
-app.post('/admin/slots/delete/:id', requireAdmin, async (req, res) => {
+app.post('/minzan/slots/delete/:id', requireAdmin, async (req, res) => {
   try {
     await prisma.bookingSlot.delete({
       where: { id: req.params.id }
     });
-    res.redirect('/admin/slots');
+    res.redirect('/minzan/slots');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error resetting slot limit');

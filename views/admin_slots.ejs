@@ -19,7 +19,7 @@
       <div class="admin-card-form" style="margin-bottom: 0;">
         <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Atur Kuota Tanggal</h3>
         
-        <form action="/admin/slots/save" method="POST" style="display: flex; flex-direction: column; gap: 1.2rem;">
+        <form action="/minzan/slots/save" method="POST" style="display: flex; flex-direction: column; gap: 1.2rem;">
           <div class="form-group">
             <label class="form-label" for="date">Pilih Tanggal *</label>
             <!-- Date picker, minimum is today -->
@@ -81,7 +81,7 @@
                       <% } %>
                     </td>
                     <td style="text-align: center;">
-                      <form action="/admin/slots/delete/<%= slot.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mereset kuota tanggal ini?')">
+                      <form action="/minzan/slots/delete/<%= slot.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mereset kuota tanggal ini?')">
                         <button type="submit" class="btn-icon delete" title="Reset/Hapus Override">🔄</button>
                       </form>
                     </td>

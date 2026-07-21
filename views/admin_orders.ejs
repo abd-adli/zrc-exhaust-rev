@@ -67,7 +67,7 @@
                   </td>
                   <td>
                     <!-- Onchange Auto Update form -->
-                    <form action="/admin/orders/update/<%= order.id %>" method="POST" id="form-status-<%= order.id %>">
+                    <form action="/minzan/orders/update/<%= order.id %>" method="POST" id="form-status-<%= order.id %>">
                       <input type="hidden" name="paymentStatus" value="<%= order.paymentStatus %>">
                       <select name="orderStatus" class="action-select" onchange="this.form.submit()">
                         <option value="PENDING_CONSULTATION" <%= order.orderStatus === 'PENDING_CONSULTATION' ? 'selected' : '' %>>Pending Konsultasi</option>
@@ -79,7 +79,7 @@
                     </form>
                   </td>
                   <td>
-                    <form action="/admin/orders/update/<%= order.id %>" method="POST" id="form-payment-<%= order.id %>">
+                    <form action="/minzan/orders/update/<%= order.id %>" method="POST" id="form-payment-<%= order.id %>">
                       <input type="hidden" name="orderStatus" value="<%= order.orderStatus %>">
                       <select name="paymentStatus" class="action-select" onchange="this.form.submit()">
                         <option value="UNPAID" <%= order.paymentStatus === 'UNPAID' ? 'selected' : '' %>>Belum Bayar</option>
@@ -89,7 +89,7 @@
                     </form>
                   </td>
                   <td style="text-align: center;">
-                    <form action="/admin/orders/delete/<%= order.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus order ini?')">
+                    <form action="/minzan/orders/delete/<%= order.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus order ini?')">
                       <button type="submit" class="btn-icon delete" title="Hapus Order">❌</button>
                     </form>
                   </td>

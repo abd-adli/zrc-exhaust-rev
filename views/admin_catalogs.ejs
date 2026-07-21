@@ -91,7 +91,7 @@
                       <button class="btn-icon edit" onclick="document.getElementById('dialog-edit-<%= item.id %>').showModal()" title="Edit Preset">✏️</button>
                       
                       <!-- Delete Form -->
-                      <form action="/admin/catalogs/delete/<%= item.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus preset ini?')">
+                      <form action="/minzan/catalogs/delete/<%= item.id %>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus preset ini?')">
                         <button type="submit" class="btn-icon delete" title="Hapus Preset">❌</button>
                       </form>
                     </div>
@@ -100,7 +100,7 @@
                     <dialog id="dialog-edit-<%= item.id %>" style="max-width: 600px; width: 90%; border-radius: 8px; border: 1px solid var(--border-color); padding: 2rem; margin: auto; box-shadow: var(--card-shadow-hover); background: #ffffff;">
                       <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--primary); text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Edit Preset Katalog</h3>
                       
-                      <form action="/admin/catalogs/update/<%= item.id %>" method="POST">
+                      <form action="/minzan/catalogs/update/<%= item.id %>" method="POST">
                         <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
                           <div class="form-group">
                             <label class="form-label">Brand *</label>
@@ -189,7 +189,7 @@
 <dialog id="dialog-add-catalog" style="max-width: 600px; width: 90%; border-radius: 8px; border: 1px solid var(--border-color); padding: 2rem; margin: auto; box-shadow: var(--card-shadow-hover); background: #ffffff;">
   <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--primary); text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Tambah Preset Baru</h3>
   
-  <form action="/admin/catalogs/create" method="POST">
+  <form action="/minzan/catalogs/create" method="POST">
     <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
       <div class="form-group">
         <label class="form-label">Brand *</label>

@@ -636,7 +636,10 @@ app.post('/minzan/login', async (req, res) => {
   const { username, password } = req.body;
   const bcrypt = require('bcryptjs');
   
-  if (username === process.env.ADMIN_USERNAME && bcrypt.compareSync(password, process.env.ADMIN_PASSWORD_HASH)) {
+  const isUsernameValid = username === process.env.ADMIN_USERNAME;
+  const isPasswordValid = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
+
+  if (isUsernameValid && isPasswordValid) {
     req.session.isAdmin = true;
     req.session.username = username;
     return res.redirect('/minzan/dashboard');

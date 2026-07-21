@@ -635,7 +635,13 @@ app.get('/minzan/login', (req, res) => {
 app.post('/minzan/login', async (req, res) => {
   const { username, password } = req.body;
   const bcrypt = require('bcryptjs');
-  
+
+  console.log("=== DEBUG LOGIN ===");
+  console.log("Input Username:", username);
+  console.log("ENV Username:", process.env.ADMIN_USERNAME);
+  console.log("ENV Hash ada/nggak?:", !!process.env.ADMIN_PASSWORD_HASH);
+  console.log("ENV Hash value (10 char pertama):", process.env.ADMIN_PASSWORD_HASH ? process.env.ADMIN_PASSWORD_HASH.substring(0, 10) : "KOSONG");
+
   const isUsernameValid = username === process.env.ADMIN_USERNAME;
   const isPasswordValid = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
 
@@ -645,7 +651,7 @@ app.post('/minzan/login', async (req, res) => {
     return res.redirect('/minzan/dashboard');
   }
 
-  res.render('admin_login', { 
+  res.render('admin_login', {
     error: 'Username atau Password salah!',
     metaTitle: "Admin Login - ZRC Exhaust",
     metaDescription: "Log masuk ke panel admin ZRC Exhaust",
